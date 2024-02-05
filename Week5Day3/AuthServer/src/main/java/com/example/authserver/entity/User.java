@@ -5,6 +5,8 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
 
 //import javax.persistence.Column;
@@ -72,6 +74,7 @@ import java.sql.Timestamp;
 ////    private List<String> permissions;
 //}
 @Data
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

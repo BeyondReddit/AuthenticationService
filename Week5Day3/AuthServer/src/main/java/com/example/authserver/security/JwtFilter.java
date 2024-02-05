@@ -27,21 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-//        Optional<AuthUserDetail> authUserDetailOptional = jwtProvider.resolveToken(request); // extract jwt from request, generate a userdetails object
-//
-//        if (authUserDetailOptional.isPresent()){
-//            AuthUserDetail authUserDetail = authUserDetailOptional.get();
-//            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-//                    authUserDetail.getUsername(),
-//                    null,
-//                    authUserDetail.getAuthorities()
-//            ); // generate authentication object
-//
-//            SecurityContextHolder.getContext().setAuthentication(authentication); // put authentication object in the secruitycontext
-//        } else {
-//            SecurityContextHolder.clearContext();
-//        }
-//
 //        filterChain.doFilter(request, response);
         String path = request.getServletPath();
         if (!("/auth/login".equals(path)) || !("/auth/signup".equals(path))) {

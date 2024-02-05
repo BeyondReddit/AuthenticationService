@@ -1,10 +1,8 @@
 package com.example.authserver.controller;
 
-import com.example.authserver.EmailServiceFeignClient;
 import com.example.authserver.UserServiceFeignClient;
 import com.example.authserver.domain.request.LoginRequest;
 import com.example.authserver.domain.request.RegisterRequest;
-import com.example.authserver.entity.User;
 import com.example.authserver.entity.User;
 import com.example.authserver.entity.UserInfo;
 import com.example.authserver.security.AuthUserDetail;
@@ -23,13 +21,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,9 +35,6 @@ public class AuthController {
 
     @Autowired
     private UserServiceFeignClient userServiceFeignClient;
-
-    @Autowired
-    private EmailServiceFeignClient emailServiceFeignClient;
 
     @Autowired
     public void setAuthenticationManager(AuthenticationManager authenticationManager) {
@@ -58,22 +52,28 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody RegisterRequest user) {
+    public ResponseEntity<String> signup(@RequestBody @Valid RegisterRequest user, BindingResult bindingResult) {
         // Call User Service to signup
-        System.out.println(user.getEmail());
-        System.out.println(user.getFirstName());
-        System.out.println(user.getEmail());
-        System.out.println(user.getPassword());
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldError().getDefaultMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation failed: " + errorMessage);
+        }
+
         User unVerifiedUser = userServiceFeignClient.signup(user);
-
-        // Send verification email
-//        emailServiceFeignClient.sendEmail(unVerifiedUser);
-
+        if (unVerifiedUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists");
+        }
         return ResponseEntity.ok("Signup successful. Check your email for verification.");
     }
 
+
+
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<String> login(@RequestBody @Valid LoginRequest loginRequest,  BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errorMessage = bindingResult.getFieldError().getDefaultMessage();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation failed: " + errorMessage);
+        }
         // Call User Service to login
         User user = userServiceFeignClient.login(loginRequest);
 
@@ -97,28 +97,22 @@ public class AuthController {
 
         //A token wil be created using the username/email/userId and permission
         String token = jwtProvider.createToken(authUserDetail);
-        System.out.println("token" + token);
 
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/getCurrentUser/{token}")
-//    public ResponseEntity<UserInfo> getCurrentUser(@RequestHeader("Authorization") String token) {
-    public ResponseEntity<UserInfo> getCurrentUser(@PathVariable String token) {
+    @GetMapping("/getCurrentUser")
+    public ResponseEntity<UserInfo> getCurrentUser(@RequestHeader("Authorization") String token) {
+//    public ResponseEntity<UserInfo> getCurrentUser(@PathVariable String token) {
         // Validate and extract user from JWT token
-
-//        Optional<AuthUserDetail> user = jwtProvider.resolveToken(token);
-
         if (token == null ) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token1 = token.substring(7); // remove the prefix "Bearer "
-        System.out.println(token);
 
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token1).getBody(); // decode
 
         String username = claims.getSubject();
-        System.out.println(username);
         List<LinkedHashMap<String, String>> permissions = (List<LinkedHashMap<String, String>>) claims.get("permissions");
 
         // convert the permission list to a list of GrantedAuthority
@@ -130,9 +124,7 @@ public class AuthController {
         UserInfo user = new UserInfo();
         user.setUserId(claims.get("userId", Integer.class));
         List<String> permissionList = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-        user.setAuthoritiesOfString(permissionList);
-        System.out.println(user.getUserId());
-//        System.out.println(user.getAuthorities());
+        user.setAuthorities(permissionList.get(0));
         return ResponseEntity.ok(user);
     }
 
