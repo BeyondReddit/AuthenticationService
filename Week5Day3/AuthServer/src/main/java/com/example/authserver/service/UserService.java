@@ -2,11 +2,9 @@ package com.example.authserver.service;
 
 //import com.example.authserver.dao.UserDao;
 import com.example.authserver.UserServiceFeignClient;
-import com.example.authserver.domain.request.SignupRequest;
 //import com.example.authserver.entity.Permission;
 //import com.example.authserver.entity.Permission;
 import com.example.authserver.entity.User;
-import com.example.authserver.exception.InvalidCredentialsException;
 import com.example.authserver.security.AuthUserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -68,13 +66,13 @@ public class UserService implements UserDetailsService {
 //            userAuthorities.add(new SimpleGrantedAuthority(permission.getPermission_name()));
 ////        }
         if (user.getType().equals("admin")){
-            userAuthorities.add(new SimpleGrantedAuthority("admin"));
+            userAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
         }
         if (user.getType().equals("user")){
-            userAuthorities.add(new SimpleGrantedAuthority("user"));
+            userAuthorities.add(new SimpleGrantedAuthority("USER"));
         }
         if (user.getType().equals("UnVerified")) {
-            userAuthorities.add(new SimpleGrantedAuthority("UnVerified"));
+            userAuthorities.add(new SimpleGrantedAuthority("UNVERIFIED"));
         }
 
         return userAuthorities;
