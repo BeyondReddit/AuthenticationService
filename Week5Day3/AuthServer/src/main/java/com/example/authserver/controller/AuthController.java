@@ -3,6 +3,7 @@ package com.example.authserver.controller;
 import com.example.authserver.EmailServiceFeignClient;
 import com.example.authserver.UserServiceFeignClient;
 import com.example.authserver.domain.request.LoginRequest;
+import com.example.authserver.domain.request.RegisterRequest;
 import com.example.authserver.entity.User;
 import com.example.authserver.entity.User;
 import com.example.authserver.entity.UserInfo;
@@ -57,12 +58,16 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody User user) {
+    public ResponseEntity<String> signup(@RequestBody RegisterRequest user) {
         // Call User Service to signup
+        System.out.println(user.getEmail());
+        System.out.println(user.getFirstName());
+        System.out.println(user.getEmail());
+        System.out.println(user.getPassword());
         User unVerifiedUser = userServiceFeignClient.signup(user);
 
         // Send verification email
-        emailServiceFeignClient.sendEmail(unVerifiedUser);
+//        emailServiceFeignClient.sendEmail(unVerifiedUser);
 
         return ResponseEntity.ok("Signup successful. Check your email for verification.");
     }
@@ -92,12 +97,14 @@ public class AuthController {
 
         //A token wil be created using the username/email/userId and permission
         String token = jwtProvider.createToken(authUserDetail);
+        System.out.println("token" + token);
 
         return ResponseEntity.ok(token);
     }
 
-    @GetMapping("/getCurrentUser")
+    @GetMapping("/getCurrentUser/{token}")
     public ResponseEntity<UserInfo> getCurrentUser(@RequestHeader("Authorization") String token) {
+//    public ResponseEntity<UserInfo> getCurrentUser(@PathVariable String token) {
         // Validate and extract user from JWT token
 
 //        Optional<AuthUserDetail> user = jwtProvider.resolveToken(token);
@@ -106,10 +113,12 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String token1 = token.substring(7); // remove the prefix "Bearer "
+        System.out.println(token);
 
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token1).getBody(); // decode
 
         String username = claims.getSubject();
+        System.out.println(username);
         List<LinkedHashMap<String, String>> permissions = (List<LinkedHashMap<String, String>>) claims.get("permissions");
 
         // convert the permission list to a list of GrantedAuthority
@@ -121,7 +130,8 @@ public class AuthController {
         UserInfo user = new UserInfo();
         user.setUserId(claims.get("userId", Integer.class));
         user.setAuthorities(authorities);
-
+        System.out.println(user.getUserId());
+        System.out.println(user.getAuthorities());
         return ResponseEntity.ok(user);
     }
 

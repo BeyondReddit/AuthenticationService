@@ -48,8 +48,8 @@ public class UserService implements UserDetailsService {
         return AuthUserDetail.builder() // spring security's userDetail
                 .userid(user.getUserId())
                 .username(user.getEmail())
-//                .password(new BCryptPasswordEncoder().encode(user.getPassword()))
-                .password(user.getPassword())
+                .password(new BCryptPasswordEncoder().encode(user.getPassword()))
+//                .password(user.getPassword())
                 .authorities(getAuthoritiesFromUser(user))
                 .accountNonExpired(true)
                 .accountNonLocked(true)
@@ -72,6 +72,9 @@ public class UserService implements UserDetailsService {
         }
         if (user.getType().equals("user")){
             userAuthorities.add(new SimpleGrantedAuthority("user"));
+        }
+        if (user.getType().equals("UnVerified")) {
+            userAuthorities.add(new SimpleGrantedAuthority("UnVerified"));
         }
 
         return userAuthorities;

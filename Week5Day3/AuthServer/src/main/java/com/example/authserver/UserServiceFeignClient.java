@@ -1,6 +1,7 @@
 package com.example.authserver;
 
 import com.example.authserver.domain.request.LoginRequest;
+import com.example.authserver.domain.request.RegisterRequest;
 import com.example.authserver.entity.User;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Optional;
 
 
-@FeignClient(name = "user-service")
+@FeignClient(name = "userservice")
 public interface UserServiceFeignClient {
-    @PostMapping("/signup")
-    User signup(@RequestBody User user);
+    @PostMapping("/users/newUser")
+    User signup(@RequestBody RegisterRequest registerRequest);
 
-    @PostMapping("/login")
+    @PostMapping("/users/getUser")
     User login(@RequestBody LoginRequest loginRequest);
-    @GetMapping("/user/{email}")
+    @GetMapping("/users/getUserByEmail/{email}")
     Optional<User> getUserByEmail(@PathVariable("email") String email);
 
 }
