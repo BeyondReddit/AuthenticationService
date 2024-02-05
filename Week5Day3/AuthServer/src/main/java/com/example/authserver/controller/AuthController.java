@@ -103,8 +103,8 @@ public class AuthController {
     }
 
     @GetMapping("/getCurrentUser/{token}")
-    public ResponseEntity<UserInfo> getCurrentUser(@RequestHeader("Authorization") String token) {
-//    public ResponseEntity<UserInfo> getCurrentUser(@PathVariable String token) {
+//    public ResponseEntity<UserInfo> getCurrentUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<UserInfo> getCurrentUser(@PathVariable String token) {
         // Validate and extract user from JWT token
 
 //        Optional<AuthUserDetail> user = jwtProvider.resolveToken(token);
@@ -129,9 +129,10 @@ public class AuthController {
         //return a userDetail object with the permissions the user has
         UserInfo user = new UserInfo();
         user.setUserId(claims.get("userId", Integer.class));
-        user.setAuthorities(authorities);
+        List<String> permissionList = authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        user.setAuthoritiesOfString(permissionList);
         System.out.println(user.getUserId());
-        System.out.println(user.getAuthorities());
+//        System.out.println(user.getAuthorities());
         return ResponseEntity.ok(user);
     }
 

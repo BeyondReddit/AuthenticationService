@@ -2,21 +2,6 @@ spring:
   application:
     name: authentication-service
 
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: user-service
-#          uri: lb://user-service # service name
-#          predicates:
-#            - Path=/user-service/** # url pattern
-#        - id: housing-service
-#          uri: lb://housing-service
-#          predicates:
-#            - Path=/housing-service/**
-#        - id: composite-service
-#          uri: lb://composite-service
-#          predicates:
-#            - Path=/composite-service/**
 
 server:
   port: 8000

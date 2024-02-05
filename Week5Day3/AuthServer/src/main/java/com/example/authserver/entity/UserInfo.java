@@ -7,5 +7,6 @@ import java.util.List;
 @Data
 public class UserInfo {
     private int userId;
-    private List<GrantedAuthority> authorities;
+//    private List<GrantedAuthority> authorities
+    private List<String> authoritiesOfString;
 }
