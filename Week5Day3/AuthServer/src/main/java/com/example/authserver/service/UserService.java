@@ -65,13 +65,13 @@ public class UserService implements UserDetailsService {
 //        for (Permission permission :  user.getPermissions()){
 //            userAuthorities.add(new SimpleGrantedAuthority(permission.getPermission_name()));
 ////        }
-        if (user.getType().equals("admin")){
+        if (user.getType().toUpperCase().equals("ADMIN")){
             userAuthorities.add(new SimpleGrantedAuthority("ADMIN"));
         }
-        if (user.getType().equals("user")){
+        if (user.getType().toUpperCase().equals("USER")){
             userAuthorities.add(new SimpleGrantedAuthority("USER"));
         }
-        if (user.getType().equals("UnVerified")) {
+        if (user.getType().toUpperCase().equals("UNVERIFIED")) {
             userAuthorities.add(new SimpleGrantedAuthority("UNVERIFIED"));
         }
 

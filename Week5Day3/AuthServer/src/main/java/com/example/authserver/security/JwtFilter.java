@@ -29,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 //        filterChain.doFilter(request, response);
         String path = request.getServletPath();
-        if (!("/auth/login".equals(path)) || !("/auth/signup".equals(path))) {
+        if (!("/auth/login".equals(path)) || !("/auth/signup".equals(path)) || !("/auth/getCurrentUser".equals(path))) {
             Optional<AuthUserDetail> authUserDetailOptional = jwtProvider.resolveToken(request); // extract jwt from request, generate a userdetails object
 
         if (authUserDetailOptional.isPresent()){
@@ -46,6 +46,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
-//
+
     }
 }
