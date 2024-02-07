@@ -74,6 +74,9 @@ public class UserService implements UserDetailsService {
         if (user.getType().toUpperCase().equals("UNVERIFIED")) {
             userAuthorities.add(new SimpleGrantedAuthority("UNVERIFIED"));
         }
+        if (user.getType().toUpperCase().equals("SUPERADMIN")) {
+            userAuthorities.add(new SimpleGrantedAuthority("SUPERADMIN"));
+        }
 
         return userAuthorities;
     }

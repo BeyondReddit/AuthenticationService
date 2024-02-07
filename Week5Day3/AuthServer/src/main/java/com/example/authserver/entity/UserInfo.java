@@ -6,5 +6,4 @@ import lombok.Data;
 public class UserInfo {
     private int userId;
     private String authorities;
-
 }

@@ -7,7 +7,6 @@ import com.example.authserver.entity.User;
 import com.example.authserver.entity.UserInfo;
 import com.example.authserver.security.AuthUserDetail;
 import com.example.authserver.security.JwtProvider;
-//import com.example.authserver.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
