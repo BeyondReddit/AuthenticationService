@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "http://127.0.0.1:5173/")
+//@CrossOrigin(origins = "http://127.0.0.1:5173/")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
